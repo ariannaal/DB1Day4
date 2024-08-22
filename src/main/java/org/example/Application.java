@@ -13,7 +13,10 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Application {
 
@@ -22,7 +25,7 @@ public class Application {
 
     public static void main(String[] args) {
 
-        System.out.println("Ciao");
+//        System.out.println("Ciao");
         EntityManager em = emf.createEntityManager();
         EventoDAO ed = new EventoDAO(em);
         PersonaDAO personaDAO = new PersonaDAO(em);
@@ -93,14 +96,34 @@ public class Application {
             Concerto concerto = new Concerto("Concerto Guns N Roses", LocalDate.of(2024, 9, 15),
                     "Tour mondiale", TipoEvento.PUBBLICO, 8000, location, GenereConcerto.ROCK, true);
 
-            ed.save(concerto);
+            Concerto concerto1 = new Concerto("Concerto Lana Del Rey", LocalDate.of(2024, 9, 15),
+                    "Tour mondiale", TipoEvento.PUBBLICO, 5000, location, GenereConcerto.POP, true);
+
+            Concerto concerto2 = new Concerto("Concerto Cesare Cremonini", LocalDate.of(2024, 9, 15),
+                    "Tour mondiale", TipoEvento.PUBBLICO, 2000, location, GenereConcerto.POP, true);
+
+//            ed.save(concerto);
+//
+//            ed.save(concerto1);
+
+            ed.save(concerto2);
 //            PartitaDiCalcio derby = new PartitaDiCalcio("Derby", LocalDate.of(2024, 8, 22),
 //                    "La partita più attesa a Milano", TipoEvento.PUBBLICO, 70000, location, "Inter", "Milan", "Inter", 3, 2, 300);
 //            ed.save(derby);
 
-            // Recupero dei concerti in streaming
-            List<Concerto> concertiStreaming = ed.getConcertiInStreaming(true);
-            System.out.println("Concerti in Streaming: " + concertiStreaming);
+            List<Concerto> concerti = new ArrayList<>();
+            concerti.add(concerto);
+            concerti.add(concerto1);
+            concerti.add(concerto2);
+
+            Map<GenereConcerto, Long> concertiPerGenere = concerti.stream()
+                    .collect(Collectors.groupingBy(Concerto::getGenere, Collectors.counting()));
+
+
+            concertiPerGenere.forEach((genere, count) ->
+                    System.out.println("Genere: " + genere + ", Numero di Concerti: " + count)
+            );
+
 
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
