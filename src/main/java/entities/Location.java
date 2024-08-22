@@ -1,15 +1,13 @@
 package entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "location")
 public class Location {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
@@ -22,8 +20,7 @@ public class Location {
     public Location() {
     }
 
-    public Location(int id, String nome, String citta) {
-        this.id = id;
+    public Location(String nome, String citta) {
         this.nome = nome;
         this.citta = citta;
     }

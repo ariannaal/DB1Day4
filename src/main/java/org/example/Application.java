@@ -4,9 +4,16 @@ import DAO.EventoDAO;
 import DAO.LocationDAO;
 import DAO.PartecipazioneDAO;
 import DAO.PersonaDAO;
+import entities.Concerto;
+import entities.Location;
+import enums.GenereConcerto;
+import enums.TipoEvento;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class Application {
 
@@ -20,6 +27,7 @@ public class Application {
         EventoDAO ed = new EventoDAO(em);
         PersonaDAO personaDAO = new PersonaDAO(em);
         LocationDAO locationDAO = new LocationDAO(em);
+
         PartecipazioneDAO partecipazioneDAO = new PartecipazioneDAO(em);
 
         // save
@@ -71,6 +79,39 @@ public class Application {
 //        } catch (Exception e) {
 //            System.out.println("Errore nel salvataggio della partecipazione: " + e.getMessage());
 //        }
+
+        //22/8/24
+
+        try {
+            // Inizia una transazione per la creazione e salvataggio della location
+            Location location = new Location("San Siro", "Milano");
+            locationDAO.save(location);
+
+            // Commetti la transazione
+
+            // Inizia una nuova transazione per la creazione e salvataggio di Concerto e PartitaDiCalcio
+            Concerto concerto = new Concerto("Concerto Guns N Roses", LocalDate.of(2024, 9, 15),
+                    "Tour mondiale", TipoEvento.PUBBLICO, 8000, location, GenereConcerto.ROCK, true);
+
+            ed.save(concerto);
+//            PartitaDiCalcio derby = new PartitaDiCalcio("Derby", LocalDate.of(2024, 8, 22),
+//                    "La partita più attesa a Milano", TipoEvento.PUBBLICO, 70000, location, "Inter", "Milan", "Inter", 3, 2, 300);
+//            ed.save(derby);
+
+            // Recupero dei concerti in streaming
+            List<Concerto> concertiStreaming = ed.getConcertiInStreaming(true);
+            System.out.println("Concerti in Streaming: " + concertiStreaming);
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();  // Rollback della transazione in caso di errore
+            }
+            System.out.println("Errore: " + e.getMessage());
+        } finally {
+            em.close();
+            emf.close();  // Chiudi l'EntityManagerFactory
+        }
+
     }
 }
 

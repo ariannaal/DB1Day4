@@ -1,10 +1,7 @@
 package entities;
 
 import enums.TipoEvento;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,20 +10,27 @@ import java.util.List;
 @Table(name = "gara_di_atletica")
 
 public class GaraDiAtletica extends Evento {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @OneToMany
+    @JoinColumn(name = "gara_id")
     private List<Persona> atleti;
 
     @OneToOne
+    @JoinColumn(name = "vincitore_id")
     private Persona vincitore;
 
     public GaraDiAtletica() {
     }
 
-    public GaraDiAtletica(String title, LocalDate eventDate, String eventDescription, TipoEvento tipo_evento, int n_massimo_partecipanti, Location location, List<Persona> atleti, Persona vincitore) {
+    public GaraDiAtletica(String title, LocalDate eventDate, String eventDescription, TipoEvento tipo_evento, int n_massimo_partecipanti, Location location, List<Persona> atleti, Persona vincitore, int id) {
         super(title, eventDate, eventDescription, tipo_evento, n_massimo_partecipanti, location);
         this.atleti = atleti;
         this.vincitore = vincitore;
+        this.id = id;
     }
 
     public List<Persona> getAtleti() {

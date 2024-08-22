@@ -1,9 +1,14 @@
 package DAO;
 
+import entities.Concerto;
 import entities.Evento;
+import enums.GenereConcerto;
 import exceptions.NotFoundEx;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
+
+import java.util.List;
 
 public class EventoDAO {
 
@@ -42,4 +47,19 @@ public class EventoDAO {
         transaction.commit();
         System.out.println("L'evento' " + found.getTitle() + " è stato eliminato con successo.");
     }
+
+    // 22/8/24
+    public List<Concerto> getConcertiInStreaming(boolean inStreaming) {
+        TypedQuery<Concerto> query = em.createQuery("SELECT c FROM Concerto c WHERE c.inStreaming = :inStreaming", Concerto.class); // specifico il tipo di oggetto che mi viene restituito
+        query.setParameter("inStreaming", inStreaming);
+        return query.getResultList();
+    }
+
+    public List<Concerto> getConcertiPerGenere(GenereConcerto genere) {
+        TypedQuery<Concerto> query = em.createQuery("SELECT c.genere, COUNT(c) FROM Concerto c WHERE c.genere = :genere GROUP BY c.genere", Concerto.class);
+        query.setParameter("genere", genere);
+        return query.getResultList();
+    }
+
+
 }

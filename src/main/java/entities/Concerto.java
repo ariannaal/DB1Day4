@@ -2,10 +2,7 @@ package entities;
 
 import enums.GenereConcerto;
 import enums.TipoEvento;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -13,9 +10,17 @@ import java.time.LocalDate;
 @Table(name = "concerto")
 public class Concerto extends Evento {
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "genere")
     private GenereConcerto genere;
 
+    @Column(name = "instreaming")
     private boolean inStreaming;
 
     public Concerto() {

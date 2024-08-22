@@ -7,10 +7,13 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "evento")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "tipo_evento")
 public class Evento {
 
     @Id // chiave primaria
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "titolo")
@@ -22,8 +25,6 @@ public class Evento {
     @Column(name = "descrizione")
     private String eventDescription;
 
-    @Enumerated(EnumType.STRING)
-    private TipoEvento tipo_evento;
 
     @Column(name = "n_massimo_partecipanti")
     private int n_massimo_partecipanti;
@@ -40,7 +41,7 @@ public class Evento {
         this.title = title;
         this.eventDate = eventDate;
         this.eventDescription = eventDescription;
-        this.tipo_evento = tipo_evento;
+        
         this.n_massimo_partecipanti = n_massimo_partecipanti;
         this.location = location;
     }
