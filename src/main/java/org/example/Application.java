@@ -6,11 +6,13 @@ import DAO.PartecipazioneDAO;
 import DAO.PersonaDAO;
 import entities.Concerto;
 import entities.Location;
+import entities.PartitaDiCalcio;
 import enums.GenereConcerto;
 import enums.TipoEvento;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -86,11 +88,10 @@ public class Application {
         //22/8/24
 
         try {
-            // Inizia una transazione per la creazione e salvataggio della location
+
             Location location = new Location("San Siro", "Milano");
             locationDAO.save(location);
 
-            // Commetti la transazione
 
             // Inizia una nuova transazione per la creazione e salvataggio di Concerto e PartitaDiCalcio
             Concerto concerto = new Concerto("Concerto Guns N Roses", LocalDate.of(2024, 9, 15),
@@ -116,6 +117,7 @@ public class Application {
             concerti.add(concerto1);
             concerti.add(concerto2);
 
+
             Map<GenereConcerto, Long> concertiPerGenere = concerti.stream()
                     .collect(Collectors.groupingBy(Concerto::getGenere, Collectors.counting()));
 
@@ -124,17 +126,49 @@ public class Application {
                     System.out.println("Genere: " + genere + ", Numero di Concerti: " + count)
             );
 
+//    public PartitaDiCalcio(String title, LocalDate eventDate, String eventDescription, TipoEvento tipo_evento, int n_massimo_partecipanti, Location location, String squadraDiCasa, String squadraOspite, String squadraVincente, int nGolSquadraCasa, int nGolSquadraOspite, int id) {
+
+            PartitaDiCalcio partita1 = new PartitaDiCalcio("partita 1", LocalDate.of(2024, 9, 15), "partita in casa", TipoEvento.PUBBLICO, 100, location, "lazio", "fiorentina", "lazio", 5, 3);
+            List<PartitaDiCalcio> partiteVinteInCasa = new ArrayList<>();
+            ed.save(partita1);
+            partiteVinteInCasa.add(partita1);
+
+            PartitaDiCalcio partita2 = new PartitaDiCalcio("partita 2", LocalDate.of(2024, 9, 15), "partita in casa", TipoEvento.PUBBLICO, 100, location, "milan", "inter", "inter", 5, 8);
+            List<PartitaDiCalcio> partiteVinteFuoriCasa = new ArrayList<>();
+            ed.save(partita2);
+            partiteVinteFuoriCasa.add(partita1);
+
+
+            // recupera e stampa le partite vinte in casa
+            TypedQuery<PartitaDiCalcio> queryVinteInCasa = em.createNamedQuery("PartitaDiCalcio.getPartiteVinteInCasa", PartitaDiCalcio.class);
+//            List<PartitaDiCalcio> partiteVinteInCasa = queryVinteInCasa.getResultList();
+            System.out.println("Partite vinte in casa:");
+            for (PartitaDiCalcio partita : partiteVinteInCasa) {
+                System.out.println(partita.getSquadraDiCasa() + " vs " + partita.getSquadraOspite() + " - Vincente: " + partita.getSquadraVincente());
+            }
+
+            // recupera e stampa le partite vinte in trasferta
+            TypedQuery<PartitaDiCalcio> queryVinteInTrasferta = em.createNamedQuery("PartitaDiCalcio.getPartiteVinteInTrasferta", PartitaDiCalcio.class);
+//            List<PartitaDiCalcio> partiteVinteInTrasferta = queryVinteInTrasferta.getResultList();
+            System.out.println("Partite vinte in trasferta:");
+            for (PartitaDiCalcio partita : partiteVinteFuoriCasa) {
+                System.out.println(partita.getSquadraDiCasa() + " vs " + partita.getSquadraOspite() + " - Vincente: " + partita.getSquadraVincente());
+            }
+
 
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();  // Rollback della transazione in caso di errore
+                em.getTransaction().rollback();
             }
             System.out.println("Errore: " + e.getMessage());
         } finally {
             em.close();
-            emf.close();  // Chiudi l'EntityManagerFactory
+            emf.close();
         }
+
 
     }
 }
+
+
 

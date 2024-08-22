@@ -8,11 +8,21 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "partita_di_calcio")
+@NamedQueries({
+        @NamedQuery(
+                name = "PartitaDiCalcio.getPartiteVinteInCasa",
+                query = "SELECT p FROM PartitaDiCalcio p WHERE p.squadraDiCasa = p.squadraVincente"
+        ),
+        @NamedQuery(
+                name = "PartitaDiCalcio.getPartiteVinteInTrasferta",
+                query = "SELECT p FROM PartitaDiCalcio p WHERE p.squadraOspite = p.squadraVincente"
+        )
+})
 public class PartitaDiCalcio extends Evento {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 
     @Column(name = "squadradicasa")
@@ -33,14 +43,14 @@ public class PartitaDiCalcio extends Evento {
     public PartitaDiCalcio() {
     }
 
-    public PartitaDiCalcio(String title, LocalDate eventDate, String eventDescription, TipoEvento tipo_evento, int n_massimo_partecipanti, Location location, String squadraDiCasa, String squadraOspite, String squadraVincente, int nGolSquadraCasa, int nGolSquadraOspite, int id) {
+    public PartitaDiCalcio(String title, LocalDate eventDate, String eventDescription, TipoEvento tipo_evento, int n_massimo_partecipanti, Location location, String squadraDiCasa, String squadraOspite, String squadraVincente, int nGolSquadraCasa, int nGolSquadraOspite) {
         super(title, eventDate, eventDescription, tipo_evento, n_massimo_partecipanti, location);
         this.squadraDiCasa = squadraDiCasa;
         this.squadraOspite = squadraOspite;
         this.squadraVincente = squadraVincente;
         this.nGolSquadraCasa = nGolSquadraCasa;
         this.nGolSquadraOspite = nGolSquadraOspite;
-        this.id = id;
+
     }
 
     public String getSquadraDiCasa() {

@@ -2,6 +2,7 @@ package DAO;
 
 import entities.Concerto;
 import entities.Evento;
+import entities.PartitaDiCalcio;
 import enums.GenereConcerto;
 import exceptions.NotFoundEx;
 import jakarta.persistence.EntityManager;
@@ -61,5 +62,13 @@ public class EventoDAO {
         return query.getResultList();
     }
 
+    public List<PartitaDiCalcio> getPartiteVinteInCasa() {
+        TypedQuery<PartitaDiCalcio> query = em.createNamedQuery("PartitaDiCalcio.getPartiteVinteInCasa", PartitaDiCalcio.class);
+        return query.getResultList();
+    }
 
+    public List<PartitaDiCalcio> getPartiteVinteInTrasferta() {
+        TypedQuery<PartitaDiCalcio> query = em.createNamedQuery("PartitaDiCalcio.getPartiteVinteInTrasferta", PartitaDiCalcio.class);
+        return query.getResultList();
+    }
 }
